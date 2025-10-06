@@ -12,6 +12,10 @@ class Patient extends Model
     protected $fillable = ['user_id', 'phone', 'gender'];
 
     public function user(){
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function appointment(){
+        return $this->hasMany(Appointment::class, 'doctor_id');
     }
 }

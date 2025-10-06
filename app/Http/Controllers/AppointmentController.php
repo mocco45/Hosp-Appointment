@@ -9,6 +9,12 @@ use Carbon\Carbon;
 
 class AppointmentController extends Controller
 {
+    public function index(){
+        $record = Appointment::with(['doctor','doctor.user','patient','patient.user'])->get();
+
+        return response()->json($record);
+    }
+
     public function store(Request $request){
         $valid = Validator::make($request->all(), [
             "patient_id" => "required|exists:patients,user_id",

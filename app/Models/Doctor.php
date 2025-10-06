@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
 
 class Doctor extends Model
 {
@@ -11,6 +12,10 @@ class Doctor extends Model
     protected $fillable = ['user_id','speciality'];
 
     public function user(){
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function appointment(){
+        return $this->hasMany(Appointment::class, 'doctor_id');
     }
 }

@@ -26,4 +26,10 @@ class DoctorController extends Controller
 
         return response()->json($weekAppointment);
     }
+
+    public function all_docs(){
+        $records = User::where('role','doctor')->get();
+
+        return response()->json($records);
+    }
 }
