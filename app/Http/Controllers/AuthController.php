@@ -36,7 +36,7 @@ class AuthController extends Controller
 
         $token = $user->createToken("auth")->plainTextToken;
 
-        return response()->json(["access" => $token]);
+        return response()->json(["access" => $token, "role" => $user->role]);
     }
 
     public function register(Request $request){
@@ -45,7 +45,7 @@ class AuthController extends Controller
             "email" => "required|email|unique:users,email",
             "password" => "required|string|confirmed",
             "phone" => "required_if:role,patient|numeric|digits_between:10,15",
-            "role" => "required|in:admin,patient,doctor",
+            "role" => "required|in:admin,patient,doctor,nurse",
             "speciality" => "required_if:role,doctor|string",
             "gender" => "required_if:role,patient|string"
         ]);

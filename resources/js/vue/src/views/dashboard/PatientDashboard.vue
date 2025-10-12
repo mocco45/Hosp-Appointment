@@ -1,5 +1,5 @@
 <template>
-
+Patient Dashboard
 </template>
 <script setup>
 

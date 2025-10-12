@@ -1,5 +1,5 @@
 <template>
-<v-form v-model="valid">
+<v-form ref="form" v-model="valid" @submit.prevent="handleLogin">
     <v-container class="fill-height d-flex" style="min-height: 100vh;">
         <v-row class="justify-center align-center" style="width: 100%;">
             <v-col class="border-md bg-white" cols="3" style="height: 300px;">
@@ -9,8 +9,8 @@
                 <div class="text-h4 text-center">
                     LOGIN
                 </div>
-                <v-text-field label="Email" type="email" variant="underlined" prepend-icon="mdi-email" icon-color="indigo-lighten-1"></v-text-field>
-                <v-text-field label="Password" type="password" variant="underlined" prepend-icon="mdi-lock" icon-color="indigo-darken-1"></v-text-field>
+                <v-text-field label="Email" type="email" variant="underlined" :rules="emailRules" v-model="email" prepend-icon="mdi-email" icon-color="indigo-lighten-1"></v-text-field>
+                <v-text-field label="Password" type="password" variant="underlined" :rules="passwordRules" v-model="password" prepend-icon="mdi-lock" icon-color="indigo-darken-1"></v-text-field>
                 <div class="d-flex justify-space-between">
                     <div>
                         <v-checkbox-btn color="primary">
@@ -24,7 +24,7 @@
                     </div>
                 </div>
                 <div class="d-flex justify-center mt-2">
-                    <v-btn class="bg-green-lighten-1" elevation="4" :loading="loading" @click="load" >login</v-btn>
+                    <v-btn class="bg-green-lighten-1" elevation="4" :loading="loading" type="submit" >login</v-btn>
                 </div>
             </v-col>
         </v-row>
@@ -32,11 +32,65 @@
 </v-form>
 </template>
 <script setup>
-  import { ref } from 'vue'
+import { ref } from 'vue'
+import useAuthStore from '../../store/useAuth'
+import router from '../../router'
+import { storeToRefs } from 'pinia'
 
-  const loading = ref(false)
-  function load () {
+const valid = ref(false)
+const form = ref(null)
+const loading = ref(false)
+const email = ref('')
+const password = ref('')
+const emailRules = [
+    v => !!v || 'Email is required',
+    v => /.+@.+\..+/.test(v) || 'Email must be valid'
+]
+
+const passwordRules = [
+    v => !!v || 'Password is required',
+    v => v.length >= 6 || 'Password must be atleast 6 characters' 
+]
+
+const auth = useAuthStore()
+
+const handleLogin = async () => {
+    const {valid} = await form.value.validate()
+    if(!valid) return
     loading.value = true
-    setTimeout(() => (loading.value = false), 3000)
-  }
+    const data = {
+        'email' : email.value,
+        'password' : password.value
+    }
+    
+    try {
+        await auth.login(data)
+        const {role} = storeToRefs(auth)
+        
+        switch (role.value) {
+            case 'doctor':
+                
+                router.push({name: 'doctor.dashboard'})
+                break;
+                
+            case 'admin':
+                router.push('/admin')
+                break;
+            
+            case 'nurse':
+                router.push('/nurse/dashboard')
+                break;
+                
+                case 'patient':
+                    router.push('/patient/dashboard')
+                    break;
+                    
+                }
+            } catch (error) {
+                console.error(error);
+                alert(error.response?.data?.message || "Login Failed")
+            }finally{
+                loading.value = false
+            }
+        }
 </script>

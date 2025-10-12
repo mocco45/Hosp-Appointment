@@ -1,5 +1,5 @@
 <template>
-
+Nurse Dashboard
 </template>
 <script setup>
 
