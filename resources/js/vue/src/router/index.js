@@ -41,6 +41,7 @@ const routes = [
         children: [
             {
                 path: 'dashboard',
+                name: 'nurse.dashboard',
                 component: () => import('../views/dashboard/NurseDashboard.vue')
             }
         ]
@@ -52,6 +53,7 @@ const routes = [
         children: [
             {
                 path: 'dashboard',
+                name: 'patient.dashboard',
                 component: () => import('../views/dashboard/PatientDashboard.vue')
             }
         ]

@@ -23,7 +23,7 @@ class AuthController extends Controller
         ]);
 
         if($valid->fails()){
-            return response()->json(["error" => $valid->errors()]);
+            return response()->json(["error" => $valid->errors()],422);
         }
 
         $validated = $valid->validated();
@@ -36,7 +36,12 @@ class AuthController extends Controller
 
         $token = $user->createToken("auth")->plainTextToken;
 
-        return response()->json(["access" => $token, "role" => $user->role]);
+        $userData = [
+            'name' => $user->name,
+            'email' => $user->email,
+        ];
+
+        return response()->json(["access" => $token, "role" => $user->role, "user" => $userData]);
     }
 
     public function register(Request $request){
@@ -51,7 +56,7 @@ class AuthController extends Controller
         ]);
 
         if($valid->fails()){
-            return response()->json(["error" => $valid->errors()]);
+            return response()->json(["error" => $valid->errors()],422);
         }
 
         $validated = $valid->validated();

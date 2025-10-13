@@ -12,8 +12,8 @@
                     <v-text-field label="Phone" type="number" :rules="phoneRules" v-model="phone" variant="underlined" prepend-icon="mdi-phone" icon-color="indigo-lighten-1" style="width: 70%;" required></v-text-field>
                     <v-select label="Role" v-model="role" variant="underlined" :rules="roleRules" :items="['Doctor','Nurse','Patient']" prepend-icon="mdi-badge-account" icon-color="indigo-lighten-1" style="width: 70%;" required></v-select>
                     <v-combobox v-if="role == 'Doctor'" label="Speciality" placeholder="Select or Add new"  v-model="speciality" variant="underlined" :items="specialist" prepend-icon="mdi-badge-account" icon-color="indigo-lighten-1" style="width: 70%;" clearable></v-combobox>
-                    <v-radio-group v-if="role == 'Patient'" label="Gender" style="width: 70%; " inline>
-                        <v-radio density="compact" v-model="gender" value="male" color="indigo-darken-2">
+                    <v-radio-group v-model="gender" v-if="role == 'Patient'" label="Gender" style="width: 70%; " inline>
+                        <v-radio density="compact" value="male" color="indigo-darken-2">
                             <template #label>
                                 <span class="text-caption text-black">Male</span>
                             </template>

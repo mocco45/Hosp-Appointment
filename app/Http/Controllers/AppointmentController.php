@@ -66,7 +66,7 @@ class AppointmentController extends Controller
         ]);
 
         if($valid->fails()){
-            return response()->json(["error" => $valid->errors()]);
+            return response()->json(["error" => $valid->errors()],422);
         }
 
         $validated = $valid->validated();

@@ -78,11 +78,11 @@ const handleLogin = async () => {
                 break;
             
             case 'nurse':
-                router.push('/nurse/dashboard')
+                router.push({name: 'nurse.dashboard'})
                 break;
                 
                 case 'patient':
-                    router.push('/patient/dashboard')
+                    router.push({name: 'patient.dashboard'})
                     break;
                     
                 }
