@@ -49,12 +49,59 @@ class User extends Authenticatable
         ];
     }
 
-    public function doctor(){
-        return $this->hasOne(Doctor::class);
+    public function doctorAppointments(){
+        return $this->hasMany(Appointment::class, 'doctor_id');
     }
 
-    public function patient(){
-        return $this->hasOne(Patient::class);
+    public function patientAppointments(){
+        return $this->hasMany(Appointment::class, 'patient_id');
     }
-    
+
+    public function headDepartmentDoctors(){
+        return $this->hasMany(Department::class, 'head_doctor_id');
+    }
+
+    public function doctorLabResults(){
+        return $this->hasMany(LabTest::class, 'doctor_id');
+    }
+
+    public function patientLabTests(){
+        return $this->hasMany(LabTest::class, 'patient_id');
+    }
+    public function doctorPatientRecords(){
+        return $this->hasMany(MedicalRecord::class, 'doctor_id');
+    }
+
+    public function patientMedicalRecords(){
+        return $this->hasMany(MedicalRecord::class, 'patient_id');
+    }
+
+    public function notifications(){
+        return $this->hasMany(Notification::class, 'user_id');
+    }
+
+    public function payments(){
+        return $this->hasMany(Payment::class, 'patient_id');
+    }
+
+    public function doctorPrescriptions(){
+        return $this->hasMany(Prescription::class, 'doctor_id');
+    }
+
+    public function patientPrescriptions(){
+        return $this->hasMany(Prescription::class, 'patient_id');
+    }
+
+    public function schedule(){
+        return $this->hasMany(Schedule::class, 'user_id');
+    }
+
+    public function wards()
+    {
+        return $this->belongsToMany(Ward::class, 'ward_user')
+                    ->withPivot('admitted_at', 'discharged_at')
+                    ->withTimestamps();
+    }
+
+
 }
