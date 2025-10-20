@@ -14,7 +14,7 @@ return new class extends Migration
        Schema::create('departments', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->foreignId('head_doctor_id')->constrained('users')->onDelete('set null')->nullable();
+            $table->unsignedBigInteger('head_doctor_id')->nullable();
             $table->string('location');
             $table->timestamps();
         });
