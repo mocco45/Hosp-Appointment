@@ -13,15 +13,15 @@ class AppointmentPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return $user->hasRole('admin') || ($user->department->head_doctor_id == $user->id);
     }
 
     /**
      * Determine whether the user can view the model.
-     */
+    */
     public function view(User $user, Appointment $appointment): bool
     {
-        return $user->hasRole('admin') || ($user->hasRole('patient') && $user->id == $appointment->patient_id);
+        return $user->hasRole('admin') || ($user->id == $appointment->doctor_id) || ($user->id == $appointment->patient_id);
     }
 
     /**
@@ -29,7 +29,7 @@ class AppointmentPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return $user->hasRole('admin') || $user->hasRole('patient');
     }
 
     /**
@@ -37,8 +37,21 @@ class AppointmentPolicy
      */
     public function update(User $user, Appointment $appointment): bool
     {
+        $stats = $appointment->status;
 
-        return $user->hasRole('admin') || ($user->hasRole('doctor') && $user->id == $appointment->doctor_id);
+        if($user->hasRole('patient') && ($user->id == $appointment->patient_id) && ($stats != 'approved')){
+            return true;
+        }
+
+        if($user->hasRole('doctor') && $user->id == $appointment->doctor_id){
+            return true;
+        }
+
+        if($user->hasRole('admin')){
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -46,7 +59,20 @@ class AppointmentPolicy
      */
     public function delete(User $user, Appointment $appointment): bool
     {
-        return false;
+        $stats = $appointment->status;
+        if($user->hasRole('admin')){
+            return true;
+        }
+
+        if($appointment->doctor_id == $user->id){
+            return true;
+        }
+
+        if($user->hasRole('patient') && ($user->id == $appointment->patient_id) && ($stats != 'approved')){
+            return true;
+        }
+
+        return  false;
     }
 
     /**

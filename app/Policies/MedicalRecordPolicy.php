@@ -13,7 +13,8 @@ class MedicalRecordPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        
+        return $user->hasRole('admin') || ($user->hasRole('doctor') && $user->id == $medicalRecord->doctor_id);
     }
 
     /**

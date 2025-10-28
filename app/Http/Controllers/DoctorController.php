@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Models\Appointment;
+use App\Services\FinderService;
 
 class DoctorController extends Controller
 {
@@ -31,5 +32,13 @@ class DoctorController extends Controller
         $records = User::where('role','doctor')->get();
 
         return response()->json($records);
+    }
+
+    public function searchDoctor(Request $request, FinderService $finder)
+    {
+        $data = $request->only(['speciality', 'name']);
+        $doctors = $finder->searchDoctor($data);
+
+        return response()->json($doctors);
     }
 }

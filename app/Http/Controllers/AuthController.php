@@ -5,9 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
-use App\Models\User;
-use App\Models\Doctor;
-use App\Models\Patient;
+use App\Http\Requests\Auth\RegisterRequest;
+use App\Http\Requests\Auth\LoginRequest;
+use App\Services\AuthService;
+use App\Services\UserService;
 
 class AuthController extends Controller
 {
@@ -16,79 +17,25 @@ class AuthController extends Controller
         return response()->json($users);
     }
 
-    public function login(Request $request){
-        $valid = Validator::make($request->all(), [
-            "email" => "required|email|exists:users,email",
-            "password" => "required|string"
-        ]);
+    public function login(LoginRequest $request, AuthService $authService){
 
-        if($valid->fails()){
-            return response()->json(["error" => $valid->errors()],422);
-        }
-
-        $validated = $valid->validated();
-
-        $user = User::where("email", $validated["email"])->first();
-
-        if(!$user || !Hash::check($validated["password"], $user->password)){
-            return response()->json(["error" => "invalid credentials"]);
-        }
-
-        $token = $user->createToken("auth")->plainTextToken;
+        $result = $authService->login($request->validated());
 
         $userData = [
-            'name' => $user->name,
-            'email' => $user->email,
+            'name' => $result['name'],
+            'email' => $result['email'],
         ];
 
-        return response()->json(["access" => $token, "role" => $user->role, "user" => $userData]);
+        return response()->json(["access" => $token, "role" => $result['role'], "user" => $userData],201);
     }
 
-    public function register(Request $request){
-        $valid = Validator::make($request->all(), [
-            "name" => "required|string",
-            "email" => "required|email|unique:users,email",
-            "password" => "required|string|confirmed",
-            "phone" => "required_if:role,patient|numeric|digits_between:10,15",
-            "role" => "required|in:admin,patient,doctor,nurse",
-            "speciality" => "required_if:role,doctor|string",
-            "gender" => "required_if:role,patient|string"
-        ]);
+    public function register(RegisterRequest $request, AuthService $service){
+        $service->register($request->validated());
 
-        if($valid->fails()){
-            return response()->json(["error" => $valid->errors()],422);
-        }
-
-        $validated = $valid->validated();
-
-        $user = User::create([
-            "name" => $validated["name"],
-            "email" => $validated["email"],
-            "password" => Hash::make($validated["password"]),
-            "phone" => $validated["phone"],
-            "role" => $validated["role"]
-        ]);
-
-        switch ($validated["role"]) {
-            case 'doctor':
-                Doctor::create([
-                    'user_id' => $user->id,
-                    'speciality' => $validated['speciality']
-                ]);
-                break;
-
-            case 'patient':
-                Patient::create([
-                    'user_id' => $user->id,
-                    'gender' => $validated['gender']
-                ]);
-                break;
-        }
-
-        return response()->json(["message" => "Create User Successful"]);
+        return response()->json(["message" => "Create User Successful"],201);
     }
 
     public function logout(){
-        
+
     }
 }
