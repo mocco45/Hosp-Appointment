@@ -18,7 +18,8 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->enum('role',['admin','patient','nurse','doctor']);
             $table->string('password');
-            $table->Biginteger('phone');
+            $table->enum('gender',['male','female']);
+            $table->string('phone');
             $table->rememberToken();
             $table->timestamps();
         });

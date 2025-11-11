@@ -103,5 +103,9 @@ class User extends Authenticatable
                     ->withTimestamps();
     }
 
+    public function hasRole($role){
+        return $this->role === $role;
+    }
+
 
 }

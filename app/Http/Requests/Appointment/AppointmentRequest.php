@@ -1,19 +1,19 @@
 <?php
 
-namespace App\Http\Requests\Auth;
+namespace App\Http\Requests\Appointment;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class RegisterRequest extends FormRequest
+class AppointmentRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return true;
+        return $this->user()->can('create', App\Models\Appointment::class);
     }
 
     /**
@@ -24,13 +24,11 @@ class RegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "name" => "required|string",
-            "email" => "required|email|unique:users,email",
-            "password" => "required|string|confirmed",
-            "phone" => "required|string",
-            "role" => "required|in:admin,patient,doctor,nurse",
-            "speciality" => "required_if:role,doctor|string",
-            "gender" => "required|string"
+            "patient_id" => "required|exists:patients,user_id",
+            "doctor_id" => "required|exists:doctors,user_id",
+            "date" => "required|date|after_or_equal:today",
+            "time" => "required|date_format:H:i",
+            "status" => "required|in:scheduled,no-show,complete,cancelled"
         ];
     }
 
@@ -38,8 +36,7 @@ class RegisterRequest extends FormRequest
         throw new HttpResponseException(
             response()->json([
                 "error" => $validator->errors()
-            ],422)
+            ])
         );
     }
-
 }

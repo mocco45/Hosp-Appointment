@@ -9,14 +9,10 @@ use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Services\AuthService;
 use App\Services\UserService;
+use App\Models\User;
 
 class AuthController extends Controller
 {
-    public function index(){
-        $users = User::all();
-        return response()->json($users);
-    }
-
     public function login(LoginRequest $request, AuthService $authService){
 
         $result = $authService->login($request->validated());
@@ -26,7 +22,7 @@ class AuthController extends Controller
             'email' => $result['email'],
         ];
 
-        return response()->json(["access" => $token, "role" => $result['role'], "user" => $userData],201);
+        return response()->json(["access" => $result['token'], "role" => $result['role'], "user" => $userData],201);
     }
 
     public function register(RegisterRequest $request, AuthService $service){

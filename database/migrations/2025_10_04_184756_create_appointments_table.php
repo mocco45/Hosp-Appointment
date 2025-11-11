@@ -20,7 +20,7 @@ return new class extends Migration
             $table->time('start_time');
             $table->time('end_time');
             $table->enum('status',['scheduled','complete','cancelled','no-show']);
-            $table->text('reasons');
+            $table->text('reasons')->nullable();
             $table->timestamps();
         });
     }

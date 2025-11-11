@@ -6,13 +6,18 @@ use App\Models\User;
 use App\Models\Doctor;
 use App\Models\Patient;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 
 class AuthService{
     public function login(array $data){
         $user = User::where("email", $data["email"])->first();
 
         if(!$user || !Hash::check($data["password"], $user->password)){
-            return response()->json(["error" => "invalid credentials"]);
+            throw ValidationException::withMessages([
+                'email' => ['Invalid email.'],
+                'password' => ['Invalid password.'],
+            ]);
+
         }
 
         $token = $user->createToken("auth")->plainTextToken;
@@ -32,7 +37,8 @@ class AuthService{
             "email" => $data["email"],
             "password" => Hash::make($data["password"]),
             "phone" => $data["phone"],
-            "role" => $data["role"]
+            "role" => $data["role"],
+            'gender' => $data['gender']
         ]);
 
         switch ($data["role"]) {
@@ -46,7 +52,6 @@ class AuthService{
             case 'patient':
                 Patient::create([
                     'user_id' => $user->id,
-                    'gender' => $data['gender']
                 ]);
                 break;
         }
