@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Appointment;
 use App\Http\Requests\Appointment\AppointmentRequest;
+use App\Http\Requests\Appointment\UpdateAppointmentRequest;
 use App\Services\AppointmentService;
 use Carbon\Carbon;
 
@@ -27,9 +28,9 @@ class AppointmentController extends Controller
     }
 
 
-    public function update(UpdateAppointmentRequest $request, AppointmentService $service,$id){
-
-        $service->update($request->validated(),$id);
+    public function update(UpdateAppointmentRequest $request, AppointmentService $service, Appointment $appointment){
+        // dd($appointment->id);
+        $service->update($request->validated(),$appointment->id);
 
         return response()->json(["message" => "Record Updated Succesfully"]);
     }

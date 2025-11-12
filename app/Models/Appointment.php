@@ -10,7 +10,7 @@ class Appointment extends Model
 {
     public $table = "appointments";
 
-    protected $fillable = ['patient_id','doctor_id','date','time','start_time','end_time','status'];
+    protected $fillable = ['patient_id','doctor_id','date','time','start_time','end_time','status','reasons'];
 
     public function patient(){
         return $this->belongsTo(User::class, 'patient_id');

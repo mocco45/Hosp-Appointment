@@ -13,16 +13,16 @@ class AuthService{
         $user = User::where("email", $data["email"])->first();
 
         if(!$user || !Hash::check($data["password"], $user->password)){
-            throw ValidationException::withMessages([
-                'email' => ['Invalid email.'],
-                'password' => ['Invalid password.'],
-            ]);
+            return [
+                'error' => ['Invalid credentials.'],
+            ];
 
         }
 
         $token = $user->createToken("auth")->plainTextToken;
 
         return [
+
             'name' => $user->name,
             'email' => $user->email,
             'role' => $user->role,

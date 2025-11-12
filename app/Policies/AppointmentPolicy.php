@@ -38,8 +38,8 @@ class AppointmentPolicy
     public function update(User $user, Appointment $appointment): bool
     {
         $stats = $appointment->status;
-
-        if($user->hasRole('patient') && ($user->id == $appointment->patient_id) && ($stats != 'approved')){
+        // dd($stats);
+        if($user->hasRole('patient') && ($user->id == $appointment->patient_id) && ($stats != 'complete')){
             return true;
         }
 

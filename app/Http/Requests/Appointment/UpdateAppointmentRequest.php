@@ -6,14 +6,15 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class ConfirmAppointmentRequest extends FormRequest
+class UpdateAppointmentRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return $this->user()->can('update', App\Models\Appointment::class);
+        $appointment =  $this->route('appointment');
+        return $this->user()->can('update', $appointment);
     }
 
     /**
@@ -30,10 +31,10 @@ class ConfirmAppointmentRequest extends FormRequest
     }
 
     public function failedValidation(Validator $validator){
-        throw new HttpResponseException([
+        throw new HttpResponseException(
             response()->json([
                 "error" => $validator->errors()
             ])
-        ]);
+        );
     }
 }

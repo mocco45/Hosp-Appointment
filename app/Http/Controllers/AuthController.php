@@ -17,6 +17,11 @@ class AuthController extends Controller
 
         $result = $authService->login($request->validated());
 
+        if (isset($result['error']) && $result['error']) {
+            return response()->json([
+                'message' => $result['message'] ?? 'Invalid credentials.',
+            ], 401);
+        }
         $userData = [
             'name' => $result['name'],
             'email' => $result['email'],

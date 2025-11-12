@@ -6,6 +6,7 @@ use App\Models\Appointment;
 use Carbon\Carbon;
 
 class AppointmentService{
+
     public function store(array $data){
         $startTime = Carbon::parse($data['time']);
         $endTime = $startTime->copy()->addMinutes(30);
@@ -39,16 +40,6 @@ class AppointmentService{
 
     public function update(array $data, $id){
         $record = Appointment::findOrFail($id);
-
-        $conflict = Appointment::where('doctor_id', $data['doctor_id'])
-                    ->where('date', $data['date'])
-                    ->where('time', $data['time'])
-                    ->where('id', '!=', $data['id'])
-                    ->exists();
-
-        if($conflict){
-            return response()->json(["error" => "This doctor already has another appointment at that time."],409);
-        }
 
         $record->update($data);
 
